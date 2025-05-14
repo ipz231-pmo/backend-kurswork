@@ -1,0 +1,8 @@
+RewriteEngine on
+
+RewriteCond %{DOCUMENT_ROOT}/wwwroot/%{REQUEST_URI} -f
+RewriteRule (.*) wwwroot/$1 [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$  index.php?route=$1 [QSA,L]
