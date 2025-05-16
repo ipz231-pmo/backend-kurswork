@@ -14,6 +14,8 @@ spl_autoload_register(function ($class) {
 
 $core = new Core();
 
+$core->init();
+
 $core->useMiddleware(new ErrorMiddleware($core));
 $core->useMiddleware(new RouterMiddleware($core));
 

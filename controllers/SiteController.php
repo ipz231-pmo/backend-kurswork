@@ -14,10 +14,10 @@ class SiteController extends Controller
     
     public function actionIndex()
     {
-        echo '<h1>SiteController -> actionIndex!</h1>';
+        $this->View();
     }
     public function actionAbout()
     {
-        $this->template->render();
+        $this->View();
     }
 }

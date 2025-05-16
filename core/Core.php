@@ -15,6 +15,7 @@ class Core
     
     public function init(): void
     {
+        session_start();
         $this->DB->init();
     }
     
@@ -50,8 +51,8 @@ class Core
         
         $pageTmpl = new Template("layout/pageTmpl.php");
         $pageTmpl->title = "Error {$code}";
-        $pageTmpl->styles = [];
-        $pageTmpl->scripts = [];
+        $pageTmpl->styles = ['lib/bootstrap/css/bootstrap.css'];
+        $pageTmpl->scripts = ['lib/bootstrap/js/bootstrap.js'];
         $pageTmpl->content = $content;
         $pageTmpl->render();
     }

@@ -28,7 +28,7 @@ class DB
         return $this->pdo;
     }
     
-    public function Select(string $table, string|array $fields = "*", string|array|null $where = null)
+    public function select(string $table, string|array $fields = "*", string|array|null $where = null)
     {
         if (is_array($fields)) {
             $fieldsString = implode(',', $fields);
@@ -38,6 +38,7 @@ class DB
             $fieldsString = '*';
         }
         
+        
         if (is_array($where)) {
             $whereString = implode('AND', $where);
         } else if(is_string($where)) {
@@ -46,7 +47,10 @@ class DB
             $whereString = '';
         }
         
-        $sql = "SELECT $fieldsString FROM $table WHERE $whereString";
+        $sql = "SELECT $fieldsString FROM $table";
+        if ($where) {
+            $sql .= " WHERE $whereString";
+        }
         $prep = $this->pdo->prepare($sql);
         $prep->execute();
         return $prep->fetchAll(PDO::FETCH_ASSOC);

@@ -3,6 +3,7 @@
 namespace middlewares;
 
 use core\Middleware;
+use ReflectionMethod;
 
 class RouterMiddleware extends Middleware
 {
@@ -34,6 +35,17 @@ class RouterMiddleware extends Middleware
         }
         
         $controller = new $controllerClass($this->core, $controllerName, $actionName);
-        $controller->$actionMethod($parameters);
+        
+//        var_dump($parameters);
+//        $reflection = new ReflectionMethod($controller, $actionMethod);
+//        $actionRequiredParameters = $reflection->getParameters();
+//        if (!empty($actionRequiredParameters)) {
+//            $parameter = $actionRequiredParameters[0];
+//            $type = $parameter->getType();
+//            var_dump($type->getName());
+//        }
+        
+        //$controller->$actionMethod($parameters);
+        $controller->$actionMethod();
     }
 }
