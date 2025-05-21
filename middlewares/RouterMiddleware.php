@@ -10,6 +10,8 @@ class RouterMiddleware extends Middleware
     
     public function handle()
     {
+        $core = $this->core;
+        
         $route = $_GET["route"] ?? "";
         $parts = explode('/', $route);
         
@@ -34,18 +36,12 @@ class RouterMiddleware extends Middleware
             return;
         }
         
-        $controller = new $controllerClass($this->core, $controllerName, $actionName);
+        $core->controllerName = $controllerName;
+        $core->actionName = $actionName;
+        $core->controllerClass = $controllerClass;
+        $core->actionMethod = $actionMethod;
+        $core->parameters = $parameters;
         
-//        var_dump($parameters);
-//        $reflection = new ReflectionMethod($controller, $actionMethod);
-//        $actionRequiredParameters = $reflection->getParameters();
-//        if (!empty($actionRequiredParameters)) {
-//            $parameter = $actionRequiredParameters[0];
-//            $type = $parameter->getType();
-//            var_dump($type->getName());
-//        }
-        
-        //$controller->$actionMethod($parameters);
-        $controller->$actionMethod();
+        $this->next?->handle();
     }
 }

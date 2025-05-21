@@ -5,7 +5,8 @@ namespace core;
 class Core
 {
     private Middleware|null $firstMiddleware, $lastMiddleware;
-    public string $controllerName, $actionName;
+    public string $controllerName, $actionName, $controllerClass, $actionMethod;
+    public array $parameters;
     public DB $DB;
     
     public function __construct()

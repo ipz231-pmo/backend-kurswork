@@ -4,6 +4,8 @@
  * @var array $styles
  * @var array $scripts
  * @var string $content
+ *
+ * @var array $headerCategories
  */
 ?>
 
@@ -19,12 +21,30 @@
 </head>
 <body>
 
-
-<div class="bg-secondary">
-    <header class="container">
-        <h1><?= $title ?></h1>
-    </header>
-</div>
+<header>
+    <div style="background: #fafbfc"> About
+        <div class="container d-flex justify-content-between ">
+            <div>
+                <a href="/site/about">About</a>
+            </div>
+            <div>Not sign in</div>
+        </div>
+    </div>
+    
+    <div> Dok
+    
+    </div>
+    <div style="background: #171718"> Navigation
+        <div class="container">
+            <?php foreach ($headerCategories as $category): ?>
+            <a href="#<?= $category['urlName']  ?>"
+               class="text-white text-decoration-none d-inline-block p-2 border-start border-end border-white mx-0" >
+                <?= $category['name'] ?>
+            </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</header>
 
 <?= $content ?>
 

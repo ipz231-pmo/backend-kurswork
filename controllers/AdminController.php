@@ -7,9 +7,9 @@ use core\Core;
 
 class AdminController extends Controller
 {
-    public function __construct(Core $core, $controllerName, $actionName)
+    public function __construct(Core $core)
     {
-        parent::__construct($core, $controllerName, $actionName);
+        parent::__construct($core);
     }
     
     public function actionReadNews()

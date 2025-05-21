@@ -4,7 +4,8 @@ namespace core;
 
 abstract class Middleware
 {
-    protected $next, $core;
+    protected Middleware|null $next;
+    protected Core $core;
     public function __construct($core)
     {
         $this->core = $core;
