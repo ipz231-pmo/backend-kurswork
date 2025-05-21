@@ -1,6 +1,6 @@
 <?php
 
-$title = "About us";
+$this->title = "About us";
 
 ?>
 

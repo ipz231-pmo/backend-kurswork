@@ -16,13 +16,13 @@ class NewsController extends Controller
     {
         $page = $_GET["page"] ?? 1;
         $db = $this->core->DB;
-            $newsTotal = $db->Select('news');
-            $newsSpliced = $newsTotal;
-            $newsSpliced = array_splice($newsSpliced, ($page - 1) * 5, 5);
+        $newsTotal = $db->Select('news');
+        $newsSpliced = $newsTotal;
+        $newsSpliced = array_splice($newsSpliced, ($page - 1) * 5, 5);
         
         $this->contentTmpl->news = $newsSpliced;
         $this->contentTmpl->currentPage = $page;
-        $this->contentTmpl->pagesCount = (int)(count($newsTotal) / 5);
+        $this->contentTmpl->pagesCount = ceil(count($newsTotal) / 5);
         
         $this->View();
     }
