@@ -56,6 +56,13 @@ class DB
         return $prep->fetchAll(PDO::FETCH_ASSOC);
         // DELETE FROM employees WHERE id=1;
     }
+    public function selectFirst(string $table, string|array $fields = "*", string|array|null $where = null) {
+        $data = $this->select($table, $fields, $where);
+        if ($data)
+            return $data[0];
+        return null;
+    }
+    
     public function Delete(string $table, string $where = "FALSE")
     {
         $sql = "DELETE FROM $table WHERE $where";

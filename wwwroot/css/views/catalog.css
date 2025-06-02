@@ -1,0 +1,20 @@
+.card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.card img {
+    max-height: 150px;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #6c757d;
+}

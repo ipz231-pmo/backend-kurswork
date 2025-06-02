@@ -7,6 +7,7 @@ class Core
     private Middleware|null $firstMiddleware, $lastMiddleware;
     public string $controllerName, $actionName, $controllerClass, $actionMethod;
     public array $parameters;
+    public array|null $user;
     public DB $DB;
     
     public function __construct()
@@ -50,10 +51,10 @@ class Core
                 $content .= "<p>$message</p>";
         }
         
-        $pageTmpl = new Template("layout/pageTmpl.php");
+        $pageTmpl = new Template("layout/templates/page.php");
         $pageTmpl->title = "Error {$code}";
-        $pageTmpl->styles = ['lib/bootstrap/css/bootstrap.css'];
-        $pageTmpl->scripts = ['lib/bootstrap/js/bootstrap.js'];
+        $pageTmpl->styles = [];
+        $pageTmpl->scripts = [];
         $pageTmpl->content = $content;
         $pageTmpl->render();
     }

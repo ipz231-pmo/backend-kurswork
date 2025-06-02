@@ -28,16 +28,22 @@ class NewsController extends Controller
     }
     public function actionItem()
     {
+        $db = $this->core->DB;
+        $tmpl = $this->contentTmpl;
+        
         $id = $_GET['id'] ?? null;
         if ($id === null) {
-            header('Location: /news');
+            http_response_code(404);
+            return;
         }
         
-        $db = $this->core->DB;
-        $new = $db->Select('news', where: "id = $id");
-        if (empty($new))
-            header('Location: /news');
-        $this->contentTmpl->new = $new;
+        $item = $db->selectFirst('news', where: "id = $id");
+        if ($item === null)
+        {
+            http_response_code(404);
+            return;
+        }
+        $tmpl->item = $item;
         $this->View();
     }
 }

@@ -1,0 +1,12 @@
+{
+  "controllers" : {
+    "shop" : {
+      "required" : "",
+      "actions" : {
+        "cart" : {
+          "required" : "user"
+        }
+      }
+    }
+  }
+}

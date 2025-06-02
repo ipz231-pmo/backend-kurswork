@@ -10,7 +10,7 @@
     <div class="container">
         <div>
             <h2><?= $item['name'] ?></h2>
-            <p><?= $item['description'] ?></p>
+            <div style="width: 600px; white-space: pre-wrap"><?= $item['description'] ?></div>
             <p class="text-success"><?= $item['price'] ?></p>
         </div>
     </div>
