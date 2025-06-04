@@ -16,7 +16,7 @@ class ShopController extends Controller
     public  function actionIndex()
     {
         $categoryUrlName = $_GET['category'] ?? null;
-        if ($categoryUrlName === null) {
+        if ($categoryUrlName === null) { // Пішов за чайом, надовго (20 хв)
             http_response_code(404);
             return;
         }
@@ -68,5 +68,9 @@ class ShopController extends Controller
         }
         $tmpl->item = $item;
         $this->View();
+    }
+    public function actionCart()
+    {
+        $this->BareView();
     }
 }

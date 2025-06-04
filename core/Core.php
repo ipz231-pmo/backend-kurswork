@@ -55,6 +55,8 @@ class Core
         $pageTmpl->title = "Error {$code}";
         $pageTmpl->styles = [];
         $pageTmpl->scripts = [];
+        $pageTmpl->user = $this->user;
+        $pageTmpl->headerCategories = $this->DB->select('categories');
         $pageTmpl->content = $content;
         $pageTmpl->render();
     }

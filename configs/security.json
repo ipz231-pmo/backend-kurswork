@@ -1,11 +1,9 @@
 {
   "controllers" : {
     "shop" : {
-      "required" : "",
+      "default_access" : "",
       "actions" : {
-        "cart" : {
-          "required" : "user"
-        }
+        "cart" : { "access" : "user" }
       }
     }
   }

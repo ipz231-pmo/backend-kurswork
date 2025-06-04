@@ -4,6 +4,8 @@
  * @var array $styles
  * @var array $scripts
  * @var string $content
+ * @var string $pageIcon
+ * @var array|null $user
  *
  * @var array $headerCategories
  */
@@ -14,50 +16,102 @@
 <head>
     <meta charset="UTF-8">
     <title><?= $title ?></title>
-    <meta name="">
+    <link rel="icon" type="image/svg" href="<?= $pageIcon ?>">
     <?php foreach ($styles as $style): ?>
     <link rel="stylesheet" type="text/css" href="<?= $style ?>">
     <?php endforeach; ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/templates/page.css">
+    
+    <?php if ($user === null): ?>
+    <link rel="stylesheet" href="/css/login.css">
+    <?php endif; ?>
 </head>
 <body>
 
+
 <div class="d-flex flex-column min-vh-100">
     <header>
+        <!-- First Header -->
         <div style="background: #fafbfc !important;" class="border-bottom border-secondary-subtle">
             <div class="container d-flex justify-content-between">
                 <ul class="nav">
                     <li class="nav-item"><a href="/" class="nav-link text-black">Home</a></li>
-                    <li class="nav-item"><a href="/home/about" class="nav-link text-black">About us</a></li>
+                    <li class="nav-item"><a href="/site/about" class="nav-link text-black">About us</a></li>
                     <li class="nav-item"><a href="/shop/all" class="nav-link text-black">All</a></li>
                     <li class="nav-item"><a href="/shop/catalog" class="nav-link text-black">Catalog</a></li>
                 </ul>
-                <div>
-                Test
+                <div class="d-flex align-items-center nav">
+                    <?php if ($user === null): ?>
+                        <button class="btn" id="show-login-window-btn" >Log in</button>
+                    <?php else: ?>
+                        <a href="/profile/" class="nav-link">Profile</a>
+                        <a href="/profile/logout" class="nav-link">Logout</a>
+                        <button
+                                id="cart-btn"
+                                class="d-flex align-items-center px-4 py-2 border-0 bg-primary text-white gap-3"
+                                hx-get="/shop/cart" hx-target="#cart" hx-trigger="click" hx-swap="outerHTML">
+                            <img src="/images/icon-cart.svg" alt="Cart Icon">
+                            Cart
+                        </button>
+                    
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
         
+        <!-- Login Window -->
+        <?php if ($user === null): ?>
         <div>
-            <div class="container d-flex align-items-center gap-5 py-3">
-                <img src="https://dok.ua/themes/redesign/img/logos/original/svg/logo-full-original-ua.svg" alt="Company Logo">
-                <div class="d-flex gap-3">
+            <div class="container position-relative">
+                <div id="login-layout" class="position-absolute bg-white border border-2 p-5 rounded-2 d-none">
                     <div>
-                        <div class="h5 text-primary"><span class="text-secondary">0(000)</span>000-000</div>
-                        <div>Free in Ukraine</div>
-                    </div>
-                    <div>
-                        <div class="m-0"><span class="text-secondary">(000)</span>000-00-00</div>
-                        <div class="m-0"><span class="text-secondary">(000)</span>000-00-00</div>
-                    </div>
-                    <div>
-                        <div class="m-0"><span class="text-secondary">(000)</span>000-00-00</div>
-                        <div class="m-0"><span class="text-secondary">(000)</span>000-00-00</div>
+                        <div class="row mb-3">
+                            <div class="col-4"><label for="email">Email</label></div>
+                            <div class="col-8"><input type="email" name="email" id="email" placeholder="Email address" required></div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-4"><label for="password">Password</label></div>
+                            <div class="col-8"><input type="password" name="password" id="password" placeholder="Password" required></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 d-flex justify-content-center align-items-center">
+                                <button class="btn border border-2 px-4 py-2" id="exit-login-window-btn">Cancel</button>
+                            </div>
+                            <div class="col-6 d-flex justify-content-center align-items-center">
+                                <button class="btn bg-primary text-white px-4 py-2" id="confirm-login-action-btn">Login</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <?php endif; ?>
+        
+        <!-- Second Header -->
+        <div>
+            <div>
+                <div class="container d-flex align-items-center gap-5 py-3">
+                    <img src="https://dok.ua/themes/redesign/img/logos/original/svg/logo-full-original-ua.svg" alt="Company Logo">
+                    <div class="d-flex gap-3">
+                        <div>
+                            <div class="h5 text-primary"><span class="text-secondary">0(000)</span>000-000</div>
+                            <div>Free in Ukraine</div>
+                        </div>
+                        <div>
+                            <div class="m-0"><span class="text-secondary">(000)</span>000-00-00</div>
+                            <div class="m-0"><span class="text-secondary">(000)</span>000-00-00</div>
+                        </div>
+                        <div>
+                            <div class="m-0"><span class="text-secondary">(000)</span>000-00-00</div>
+                            <div class="m-0"><span class="text-secondary">(000)</span>000-00-00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Third Header -->
         <div style="background: #171718">
             <div class="container">
                 <ul class="nav justify-content-center py-2">
@@ -157,9 +211,18 @@
             </div>
         </div>
     </footer>
+</div>
+    
 
+<div
+        id="cart-layout"
+        class="fixed-top vh-100 vw-100 d-none d-flex align-items-center justify-content-center">
+    <div id="cart"></div>
 </div>
 
+<script>
+    let currentLocation = "<?= $_GET['route'] ?? "" ?>";
+</script>
 
 <?php foreach ($scripts as $script): ?>
 <script src="<?=$script?>"></script>
@@ -171,5 +234,11 @@
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
 
+
+<?php if ($user === null): ?>
+<script src="/js/login.js"></script>
+<?php else: ?>
+<script src="/js/cart.js"></script>
+<?php endif; ?>
 </body>
 </html>
