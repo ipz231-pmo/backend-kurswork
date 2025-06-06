@@ -24,7 +24,9 @@
     <link rel="stylesheet" href="/css/templates/page.css">
     
     <?php if ($user === null): ?>
-    <link rel="stylesheet" href="/css/login.css">
+        <link rel="stylesheet" href="/css/login.css">
+    <?php else: ?>
+        <link rel="stylesheet" href="/css/logout.css">
     <?php endif; ?>
 </head>
 <body>
@@ -46,7 +48,7 @@
                         <button class="btn" id="show-login-window-btn" >Log in</button>
                     <?php else: ?>
                         <a href="/profile/" class="nav-link">Profile</a>
-                        <a href="/profile/logout" class="nav-link">Logout</a>
+                        <button class="btn" id="show-logout-window-btn">Logout</button>
                         <button
                                 id="cart-btn"
                                 class="d-flex align-items-center px-4 py-2 border-0 bg-primary text-white gap-3"
@@ -80,6 +82,30 @@
                             </div>
                             <div class="col-6 d-flex justify-content-center align-items-center">
                                 <button class="btn bg-primary text-white px-4 py-2" id="confirm-login-action-btn">Login</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+        
+        <!-- Logout Window -->
+        
+        <?php if ($user !== null): ?>
+        <div>
+            <div class="container position-relative">
+                <div id="logout-layout" class="position-absolute bg-white border border-2 p-5 rounded-2 d-none">
+                    <div>
+                        <div class="row h5 mb-3">
+                            Are you sure you want to logout?
+                        </div>
+                        <div class="row">
+                            <div class="col-6 d-flex justify-content-center align-items-center">
+                                <button class="btn border border-2 px-4 py-2" id="exit-logout-window-btn">Cancel</button>
+                            </div>
+                            <div class="col-6 d-flex justify-content-center align-items-center">
+                                <button class="btn bg-primary text-white px-4 py-2" id="confirm-logout-action-btn">Logout</button>
                             </div>
                         </div>
                     </div>
@@ -239,6 +265,7 @@
 <script src="/js/login.js"></script>
 <?php else: ?>
 <script src="/js/cart.js"></script>
+<script src="/js/logout.js"></script>
 <?php endif; ?>
 </body>
 </html>

@@ -15,8 +15,8 @@ class ProfileController extends Controller
     
     public function actionLogin(){
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(400);
-            echo json_encode(['status' => '400', 'message' => 'Bad request method']);
+            http_response_code(405);
+            echo json_encode(['status' => '405', 'message' => 'Bad request method']);
             exit;
         }
 
@@ -58,16 +58,7 @@ class ProfileController extends Controller
             die;
         }
         $_SESSION['userId'] = $user['id'];
-        http_response_code(200);
         echo json_encode(['status' => '200', 'message' => 'Login success']);
-        
-        
-        
-            //sendJsonResponse(['error' => 'Invalid request method. Only POST is allowed.'], 405);
-            //sendJsonResponse(['error' => 'Invalid JSON payload.'], 400);
-            //sendJsonResponse(['error' => 'Email and password cannot be empty.'], 400);
-            //sendJsonResponse(['error' => 'Invalid email format.'], 400);
-            //sendJsonResponse(['error' => 'Missing email or password.'], 400);
     }
     
     
@@ -76,7 +67,7 @@ class ProfileController extends Controller
         $db = $core->DB;
         
         unset($_SESSION['userId']);
-        header("Location: /");
+        echo json_encode(['status' => '200', 'message' => 'Logout success']);
     }
     
 }
