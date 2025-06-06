@@ -43,6 +43,16 @@ class Template
         return ob_get_clean();
     }
     
+    public function renderComponent($file)
+    {
+        if (!file_exists($file))
+            throw new Exception("Template file {$file} not found");
+        
+        $component = new Template($file);
+        $component->setParameters($this->parameters);
+        $component->render();
+    }
+    
     public function setTemplatePath(string $path)  {
         $this->templatePath = $path;
     }
