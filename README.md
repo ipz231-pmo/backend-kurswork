@@ -8,5 +8,5 @@ Decrease JavaScript usage by providing possibility of sending any http verb by a
 # Add basic filtering
 # Implement cart
 - Create async request to add, remove, update item in cart
-# Add more Improves to project
-- Add config for ErrorMiddleware (Not show page for json)
+# Add more Improvements to project
+# Change look of News Page

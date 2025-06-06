@@ -1,0 +1,9 @@
+{
+  "no_client_error_page" : {
+    "controllers" : {
+      "profile" : {
+        "actions" : [ "login" ]
+      }
+    }
+  }
+}

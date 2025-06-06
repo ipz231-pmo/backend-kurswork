@@ -17,7 +17,7 @@ class ProfileController extends Controller
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(405);
             echo json_encode(['status' => '405', 'message' => 'Bad request method']);
-            exit;
+            return;
         }
 
         $inputJSON = file_get_contents('php://input');
@@ -26,13 +26,13 @@ class ProfileController extends Controller
         if (json_last_error() !== JSON_ERROR_NONE) {
             http_response_code(400);
             echo json_encode(['status' => '400', 'message' => json_last_error_msg()]);
-            exit;
+            return;
         }
         
         if (!isset($input['email']) || !isset($input['password'])) {
             http_response_code(400);
             echo json_encode(['status' => '400', 'message' => 'Missing credentials']);
-            exit;
+            return;
         }
         
         $email = trim($input['email']);
@@ -41,13 +41,13 @@ class ProfileController extends Controller
         if (empty($email) || empty($password)) {
             http_response_code(400);
             echo json_encode(['status' => '400', 'message' => 'Missing credentials']);
-            exit;
+            return;
         }
         
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             http_response_code(400);
             echo json_encode(['status' => '400', 'message' => 'Invalid email syntax']);
-            exit;
+            return;
         }
         
         $db = $this->core->DB;
@@ -55,8 +55,9 @@ class ProfileController extends Controller
         if ($user === null) {
             http_response_code(400);
             echo json_encode(['status' => '400', 'message' => 'Invalid email or password']);
-            die;
+            return;
         }
+        
         $_SESSION['userId'] = $user['id'];
         echo json_encode(['status' => '200', 'message' => 'Login success']);
     }
