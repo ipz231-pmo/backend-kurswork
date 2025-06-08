@@ -23,8 +23,7 @@
                     <button class="btn" id="show-logout-window-btn">Logout</button>
                     <button
                         id="cart-btn"
-                        class="d-flex align-items-center px-4 py-2 border-0 bg-primary text-white gap-3"
-                        hx-get="/shop/cart" hx-target="#cart" hx-trigger="click" hx-swap="outerHTML">
+                        class="d-flex align-items-center px-4 py-2 border-0 bg-primary text-white gap-3">
                         <img src="/images/icon-cart.svg" alt="Cart Icon">
                         Cart
                     </button>
@@ -125,9 +124,3 @@
         </div>
     </div>
 </header>
-
-<?php if ($user === null): ?>
-    <script src="/js/login.js"></script>
-<?php else: ?>
-    <script src="/js/logout.js"></script>
-<?php endif; ?>

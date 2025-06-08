@@ -8,15 +8,19 @@ let confirmLoginActionBtn = document.querySelector("#confirm-login-action-btn");
 let showLoginWindowBtn = document.querySelector("#show-login-window-btn");
 
 
-showLoginWindowBtn.addEventListener("click", function (ev) {
+showLoginWindowBtn.addEventListener("click", showLoginWindow);
+exitLoginWindowBtn.addEventListener("click", exitLoginWindow);
+confirmLoginActionBtn.addEventListener("click", confirmLoginAction);
+
+
+function showLoginWindow(){
+    window.scrollTo(0,0);
     loginLayout.classList.remove("d-none");
-});
-
-exitLoginWindowBtn.addEventListener("click", function (ev) {
+}
+function exitLoginWindow(){
     loginLayout.classList.add("d-none");
-});
-
-confirmLoginActionBtn.addEventListener("click", async function (ev) {
+}
+async function confirmLoginAction(){
     let email = emailInput.value.trim();
     let password = passwordInput.value.trim();
 
@@ -33,8 +37,8 @@ confirmLoginActionBtn.addEventListener("click", async function (ev) {
     let message = responseData['message'];
 
     if (status === '200'){
-        document.location.replace(currentLocation);
+        document.location.replace(document.location.href);
     } else  {
         alert(message);
     }
-});
+}

@@ -17,10 +17,13 @@
     <meta charset="UTF-8">
     <title><?= $title ?></title>
     <link rel="icon" type="image/svg" href="<?= $pageIcon ?>">
+    
     <?php foreach ($styles as $style): ?>
     <link rel="stylesheet" type="text/css" href="<?= $style ?>">
     <?php endforeach; ?>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    
     <link rel="stylesheet" href="/css/templates/page.css">
     
     <?php if ($user === null): ?>
@@ -51,9 +54,6 @@
     <div id="cart"></div>
 </div>
 
-<?php foreach ($scripts as $script): ?>
-<script src="<?=$script?>"></script>
-<?php endforeach; ?>
 
 <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 <script
@@ -61,9 +61,20 @@
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
 
+
 <?php if ($user !== null): ?>
 <script src="/js/cart.js"></script>
 <?php endif; ?>
+
+<?php if ($user === null): ?>
+    <script src="/js/login.js"></script>
+<?php else: ?>
+    <script src="/js/logout.js"></script>
+<?php endif; ?>
+
+<?php foreach ($scripts as $script): ?>
+<script src="<?=$script?>"></script>
+<?php endforeach; ?>
 
 </body>
 </html>

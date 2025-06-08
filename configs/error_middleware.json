@@ -3,6 +3,9 @@
     "controllers" : {
       "profile" : {
         "actions" : [ "login" ]
+      },
+      "shop" : {
+        "actions" : [ "addToCart", "removeFromCart" ]
       }
     }
   }

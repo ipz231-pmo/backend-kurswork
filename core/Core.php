@@ -35,20 +35,17 @@ class Core
     }
     public function renderErrorPage($code, $message)
     {
-        $debugEnabled = true;
         $pagePath = "layout/default_pages/error_{$code}.php";
         if (file_exists($pagePath))
         {
             $tmpl = new Template($pagePath);
-            if ($debugEnabled)
-                $tmpl->message = $message;
+            $tmpl->message = $message;
             $content = $tmpl->getOutput();
         }
         else
         {
             $content = "<h1>Error -> $code</h1>";
-            if ($debugEnabled)
-                $content .= "<p>$message</p>";
+            $content .= "<p>$message</p>";
         }
         
         $pageTmpl = new Template("layout/templates/page.php");

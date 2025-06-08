@@ -21,7 +21,7 @@ class Controller
             'styles' => [],
             'scripts' => [],
             'content' => '',
-            'pageIcon' => 'images/favicon.svg',
+            'pageIcon' => '/images/favicon.svg',
             'headerCategories' => $db->select('Categories'),
             'user' => $core->user,
         ];

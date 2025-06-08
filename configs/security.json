@@ -3,7 +3,9 @@
     "shop" : {
       "default_access" : "",
       "actions" : {
-        "cart" : { "access" : "user" }
+        "cart" : { "access" : "user" },
+        "addToCart" : { "access" :  "user" },
+        "removeFromCart" : { "access" :  "user" }
       }
     }
   }
