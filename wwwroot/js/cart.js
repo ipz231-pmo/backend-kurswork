@@ -41,8 +41,79 @@ function closeCart(){
 function applyCartEventListeners(){
     let closeCartBtn = cartContainer.querySelector("#close-cart-btn");
     let closeCartBtn2 = cartContainer.querySelector("#close-cart-btn-2");
-
-
     if (closeCartBtn) closeCartBtn.addEventListener("click", closeCart);
     if (closeCartBtn2) closeCartBtn2.addEventListener("click", closeCart);
+
+    // Remove item buttons
+    const removeButtons = cartContainer.querySelectorAll('.remove-from-cart-btn');
+    removeButtons.forEach(button => {
+        button.addEventListener('click', handleRemoveItem);
+    });
+
+    // Quantity inputs
+    const quantityInputs = cartContainer.querySelectorAll('.cart-item-quantity');
+    quantityInputs.forEach(input => {
+        input.addEventListener('change', handleUpdateQuantity);
+    });
+
+}
+
+async function handleRemoveItem(event) {
+    const button = event.currentTarget;
+    const goodId = button.dataset.goodId;
+    button.disabled = true;
+
+    try {
+        const response = await fetch('/shop/removeFromCart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ goodId: goodId })
+        });
+        const result = await response.json();
+        if (response.ok && result.status === '200') {
+            await openCart();
+        } else {
+            alert('Error: ' + (result.message || 'Could not remove item.'));
+            button.disabled = false;
+        }
+    } catch (error) {
+        console.error('Remove from cart failed:', error);
+        alert('An unexpected error occurred.');
+        button.disabled = false;
+    }
+}
+
+async function handleUpdateQuantity(event) {
+    const input = event.currentTarget;
+    const goodId = input.dataset.goodId;
+    const quantity = parseInt(input.value, 10);
+    input.disabled = true;
+
+    if (isNaN(quantity)) {
+        alert('Invalid quantity.');
+        input.disabled = false;
+        openCart(); // Revert to original value by refreshing
+        return;
+    }
+
+    // The backend handles quantity <= 0 as a removal.
+    // The action is the same as add to cart, which handles updates.
+    try {
+        const response = await fetch('/shop/addToCart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ goodId: goodId, quantity: quantity })
+        });
+        const result = await response.json();
+        if (response.ok && result.status === '200') {
+            openCart(); // Refresh cart view to show new totals
+        } else {
+            alert('Error: ' + (result.message || 'Could not update quantity.'));
+            openCart(); // Refresh to revert changes on failure
+        }
+    } catch (error) {
+        console.error('Update quantity failed:', error);
+        alert('An unexpected error occurred.');
+        openCart(); // Refresh to revert changes on failure
+    }
 }

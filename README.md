@@ -7,6 +7,5 @@ Decrease JavaScript usage by providing possibility of sending any http verb by a
 - Create fourth header in page template
 - Create crud operations for main tables
 # Add Profile page
-# Update cart
 # Implement Security
 # Change look of News Page
