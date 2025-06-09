@@ -13,6 +13,17 @@ class ShopController extends Controller
         parent::__construct($core);
     }
     
+    public function actionPlaceOrder()
+    {
+        $this->View();
+    }
+    
+    public function actionPlaceOrderAsync()
+    {
+        
+    }
+    
+    
     public  function actionIndex()
     {
         $db = $this->core->DB;

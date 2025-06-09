@@ -54,6 +54,9 @@
     <div id="cart"></div>
 </div>
 
+<!-- Register Layout -->
+<?php $this->renderComponent("layout/templates/register.php") ?>
+
 
 <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 <script
@@ -68,6 +71,7 @@
 
 <?php if ($user === null): ?>
     <script src="/js/login.js"></script>
+    <script src="/js/register.js"></script>
 <?php else: ?>
     <script src="/js/logout.js"></script>
 <?php endif; ?>

@@ -2,7 +2,7 @@
   "no_client_error_page" : {
     "controllers" : {
       "profile" : {
-        "actions" : [ "login" ]
+        "actions" : [ "login", "logout", "registerAsync", "updateAsync" ]
       },
       "shop" : {
         "actions" : [ "addToCart", "removeFromCart" ]

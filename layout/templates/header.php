@@ -18,8 +18,9 @@
             <div class="d-flex align-items-center nav">
                 <?php if ($user === null): ?>
                     <button class="btn" id="show-login-window-btn" >Log in</button>
+                    <button class="btn" id="show-register-window-btn" >Register</button>
                 <?php else: ?>
-                    <a href="/profile/" class="nav-link">Profile</a>
+                    <a href="/profile" class="nav-link">Profile</a>
                     <button class="btn" id="show-logout-window-btn">Logout</button>
                     <button
                         id="cart-btn"

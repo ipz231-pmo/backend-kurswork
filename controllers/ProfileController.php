@@ -13,21 +13,175 @@ class ProfileController extends Controller
         parent::__construct($core);
     }
     
+    public function actionIndex()
+    {
+        if ($this->core->user === null) {
+            header("Location: /");
+            exit();
+        }
+        
+        $this->contentTmpl->title = 'My Profile';
+        $this->contentTmpl->currentUser = $this->core->user;
+        $this->contentTmpl->scripts = ['/js/profile.js'];
+        $this->View();
+    }
+    
+    
+    public function actionRegisterAsync()
+    {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['status' => '405', 'message' => 'Bad request method']);
+            return;
+        }
+        
+        $input = $this->getJsonInput();
+        if ($input === null) return;
+        
+        // --- Validation ---
+        $required = ['name', 'familyName', 'email', 'password'];
+        foreach ($required as $field) {
+            if (empty($input[$field])) {
+                http_response_code(400);
+                echo json_encode(['status' => '400', 'message' => "Missing required field: {$field}"]);
+                return;
+            }
+        }
+        
+        $email = trim($input['email']);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            http_response_code(400);
+            echo json_encode(['status' => '400', 'message' => 'Invalid email format.']);
+            return;
+        }
+        
+        // Check if email already exists
+        $pdo = $this->core->DB->getPDO();
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        if ($stmt->fetch()) {
+            http_response_code(409); // Conflict
+            echo json_encode(['status' => '409', 'message' => 'An account with this email already exists.']);
+            return;
+        }
+        
+        // --- Insertion ---
+        $hashedPassword = password_hash(trim($input['password']), PASSWORD_DEFAULT);
+        
+        $sql = "INSERT INTO users (name, familyName, email, password, role) VALUES (?, ?, ?, ?, ?)";
+        $params = [
+            trim($input['name']),
+            trim($input['familyName']),
+            $email,
+            $hashedPassword,
+            'user'
+        ];
+        $stmt = $pdo->prepare($sql);
+        $success = $stmt->execute($params);
+        
+        if ($success) {
+            $_SESSION['userId'] = $pdo->lastInsertId();
+            echo json_encode(['status' => '200', 'message' => 'Registration successful.']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['status' => '500', 'message' => 'Could not register user.']);
+        }
+    }
+    
+    public function actionUpdateAsync()
+    {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['status' => '405', 'message' => 'Bad request method']);
+            return;
+        }
+        
+        if (!isset($_SESSION['userId'])) {
+            http_response_code(401);
+            echo json_encode(['status' => '401', 'message' => 'You must be logged in to update your profile.']);
+            return;
+        }
+        $userId = $_SESSION['userId'];
+        
+        $input = $this->getJsonInput();
+        if ($input === null) return;
+        if (empty($input)) {
+            http_response_code(400);
+            echo json_encode(['status' => '400', 'message' => 'No update data provided.']);
+            return;
+        }
+        
+        $pdo = $this->core->DB->getPDO();
+        $setClauses = [];
+        $params = [];
+        
+        // Dynamically build the query based on provided input
+        $allowedFields = ['name', 'familyName', 'email', 'password', 'phone', 'mailIndex'];
+        foreach ($allowedFields as $field) {
+            if (isset($input[$field])) {
+                $value = trim($input[$field]);
+                if (empty($value) && $field !== 'phone' && $field !== 'mailIndex') continue; // Don't set required fields to empty
+                
+                // Special validation for email
+                if ($field === 'email') {
+                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                        http_response_code(400);
+                        echo json_encode(['status' => '400', 'message' => 'Invalid email format.']);
+                        return;
+                    }
+                    // Check if email is taken by ANOTHER user
+                    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+                    $stmt->execute([$value, $userId]);
+                    if ($stmt->fetch()) {
+                        http_response_code(409);
+                        echo json_encode(['status' => '409', 'message' => 'This email is already in use by another account.']);
+                        return;
+                    }
+                }
+                
+                $setClauses[] = "$field = ?";
+                if ($field === 'password') {
+                    $params[] = password_hash($value, PASSWORD_DEFAULT);
+                } elseif ($field === 'mailIndex') {
+                    $params[] = is_numeric($value) ? (int)$value : null;
+                } else {
+                    $params[] = $value;
+                }
+            }
+        }
+        
+        if (empty($setClauses)) {
+            http_response_code(400);
+            echo json_encode(['status' => '400', 'message' => 'No valid update data provided.']);
+            return;
+        }
+        
+        $sql = "UPDATE users SET " . implode(', ', $setClauses) . " WHERE id = ?";
+        $params[] = $userId;
+        
+        $stmt = $pdo->prepare($sql);
+        $success = $stmt->execute($params);
+        
+        if ($success) {
+            echo json_encode(['status' => '200', 'message' => 'Profile updated successfully.']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['status' => '500', 'message' => 'Failed to update profile.']);
+        }
+    }
+    
+    
     public function actionLogin(){
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(405);
             echo json_encode(['status' => '405', 'message' => 'Bad request method']);
             return;
         }
-
-        $inputJSON = file_get_contents('php://input');
-        $input = json_decode($inputJSON, TRUE);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            http_response_code(400);
-            echo json_encode(['status' => '400', 'message' => json_last_error_msg()]);
-            return;
-        }
+        
+        $input = $this->getJsonInput();
+        if ($input === null) return;
         
         if (!isset($input['email']) || !isset($input['password'])) {
             http_response_code(400);
@@ -50,25 +204,29 @@ class ProfileController extends Controller
             return;
         }
         
-        $db = $this->core->DB;
-        $user = $db->selectFirst('users', where: "email = '{$email}' and password = '{$password}'");
-        if ($user === null) {
-            http_response_code(400);
-            echo json_encode(['status' => '400', 'message' => 'Invalid email or password']);
-            return;
-        }
         
-        $_SESSION['userId'] = $user['id'];
-        echo json_encode(['status' => '200', 'message' => 'Login success']);
+        $db = $this->core->DB;
+        $pdo = $db->getPdo();
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($user && password_verify($password, $user['password'])) {
+            $_SESSION['userId'] = $user['id'];
+            echo json_encode(['status' => '200', 'message' => 'Login success']);
+        } else {
+            http_response_code(401); // Unauthorized
+            echo json_encode(['status' => '401', 'message' => 'Invalid email or password']);
+        }
     }
-    
     
     public function actionLogout(){
-        $core = $this->core;
-        $db = $core->DB;
-        
         unset($_SESSION['userId']);
+        header("Content-type: application/json");
         echo json_encode(['status' => '200', 'message' => 'Logout success']);
     }
+    
+    // profile/index (profile page)
+    // profile/register (registration page)
     
 }

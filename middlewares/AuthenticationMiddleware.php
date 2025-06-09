@@ -19,7 +19,7 @@ class AuthenticationMiddleware extends Middleware
         $userId = $_SESSION['userId'] ?? null;
         $user = null;
         if (isset($userId))
-            $user = $db->selectFirst('users', ['id', 'email', 'role'], "id = '$userId'");
+            $user = $db->selectFirst('users',  where: "id = '$userId'");
         if (!$user)
             unset($_SESSION['userId']);
         

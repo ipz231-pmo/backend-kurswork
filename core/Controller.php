@@ -53,4 +53,18 @@ class Controller
     {
         $this->contentTmpl->render();
     }
+    
+    protected function getJsonInput()
+    {
+        $inputJSON = file_get_contents('php://input');
+        $input = json_decode($inputJSON, TRUE);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            http_response_code(400);
+            echo json_encode(['status' => '400', 'message' => 'Invalid JSON format: ' . json_last_error_msg()]);
+            return null;
+        }
+        return $input;
+    }
+    
 }
