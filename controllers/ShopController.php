@@ -15,12 +15,117 @@ class ShopController extends Controller
     
     public function actionPlaceOrder()
     {
+        if ($this->core->user === null) {
+            header("Location: /"); // Redirect non-logged-in users
+            exit();
+        }
+        
+        // Items
+        $pdo = $this->core->DB->getPdo();
+        $sql = "SELECT g.name, g.price, cg.goodQuantity as quantity
+                FROM cartgoods cg
+                JOIN goods g ON cg.goodId = g.id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $this->contentTmpl->items = $items;
+        
+        $pdo = $this->core->DB->getPdo();
+        $sql = "SELECT sum(g.price * cg.goodQuantity)
+                FROM cartgoods cg
+                JOIN goods g ON cg.goodId = g.id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $totalPrice = array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
+        $this->contentTmpl->totalPrice = $totalPrice;
+        
+        $this->contentTmpl->user = $this->core->user;
+        $this->contentTmpl->title = "Place Your Order";
+        $this->contentTmpl->scripts = ['/js/shop/placeOrder.js'];
         $this->View();
     }
     
     public function actionPlaceOrderAsync()
     {
+        header('Content-Type: application/json');
         
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['status' => '405', 'message' => 'Method Not Allowed']);
+            return;
+        }
+        
+        $userId = $_SESSION['userId'] ?? null;
+        if ($userId === null) {
+            http_response_code(401);
+            echo json_encode(['status' => '401', 'message' => 'You must be logged in to place an order.']);
+            return;
+        }
+        
+        $input = $this->getJsonInput();
+        if ($input === null) return;
+        
+        $phone = trim($input['phone'] ?? '');
+        $postalIndex = trim($input['postalIndex'] ?? '');
+        
+        if (empty($phone) || empty($postalIndex) || !is_numeric($postalIndex)) {
+            http_response_code(400);
+            echo json_encode(['status' => '400', 'message' => 'A valid phone number and numeric postal index are required.']);
+            return;
+        }
+        
+        $pdo = $this->core->DB->getPDO();
+        
+        // Get all items from the user's cart to calculate the total price
+        $cartStmt = $pdo->prepare(
+            "SELECT g.price, cg.goodQuantity FROM cartgoods cg
+             JOIN goods g ON cg.goodId = g.id WHERE cg.userId = ?"
+        );
+        $cartStmt->execute([$userId]);
+        $cartItems = $cartStmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (empty($cartItems)) {
+            http_response_code(400);
+            echo json_encode(['status' => '400', 'message' => 'Your cart is empty.']);
+            return;
+        }
+        
+        // --- Database Transaction ---
+        try {
+            $pdo->beginTransaction();
+            
+            // 1. Calculate total price from the cart
+            $totalPrice = 0;
+            foreach ($cartItems as $item) {
+                $totalPrice += $item['price'] * $item['goodQuantity'];
+            }
+            
+            // 2. Create the order in the `orders` table
+            $orderStmt = $pdo->prepare(
+                "INSERT INTO orders (userId, price, postalIndex, date, status) VALUES (?, ?, ?, ?, 'Pending')"
+            );
+            $orderStmt->execute([$userId, $totalPrice, (int)$postalIndex, date('Y-m-d')]);
+            
+            // 3. Update the user's profile with the new contact info
+            $userUpdateStmt = $pdo->prepare("UPDATE users SET phone = ?, mailIndex = ? WHERE id = ?");
+            $userUpdateStmt->execute([$phone, (int)$postalIndex, $userId]);
+            
+            // 4. Clear the user's cart, as the order is now placed
+            $clearCartStmt = $pdo->prepare("DELETE FROM cartgoods WHERE userId = ?");
+            $clearCartStmt->execute([$userId]);
+            
+            // 5. If everything is successful, commit the transaction
+            $pdo->commit();
+            
+            echo json_encode(['status' => '200', 'message' => 'Order placed successfully!']);
+            
+        } catch (\Exception $e) {
+            // If any error occurs, roll back the entire transaction
+            $pdo->rollBack();
+            error_log("Order placement failed: " . $e->getMessage()); // Log error for debugging
+            http_response_code(500);
+            echo json_encode(['status' => '500', 'message' => 'Could not place the order. Please try again later.']);
+        }
     }
     
     
@@ -276,19 +381,5 @@ class ShopController extends Controller
             http_response_code(500);
             echo json_encode(['status' => '500', 'message' => 'Failed to remove item from cart.']);
         }
-    }
-    
-    
-    private function getJsonInput()
-    {
-        $inputJSON = file_get_contents('php://input');
-        $input = json_decode($inputJSON, TRUE);
-        
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            http_response_code(400);
-            echo json_encode(['status' => '400', 'message' => 'Invalid JSON format: ' . json_last_error_msg()]);
-            return null;
-        }
-        return $input;
     }
 }

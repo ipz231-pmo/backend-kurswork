@@ -63,7 +63,7 @@ $this->scripts = array_merge($scripts, ["/js/shop/index.js"]);
                 <div id="items-container">
                     <?php foreach ($items as $item): ?>
                     <a href="/shop/item?id=<?= $item['id'] ?>" class="row mb-5 align-items-start text-decoration-none">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2296/2296882.png" class="col-3" alt="product image" height="200" >
+                        <img src="/images/icon-no-image.png" class="col-3 img-fluid" alt="product image" height="200" >
                         <div class="col-7 text-decoration-none text-black h5">
                             <?= $item['name'] ?>
                         </div>

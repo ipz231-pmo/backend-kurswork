@@ -25,6 +25,7 @@ async function addToCart(){
 
         if (response.ok) {
             document.querySelector('#cart-btn')?.click();
+            let addToCartLayout = document.querySelector("#add-to-cart-layout")
             addToCartLayout.innerHTML = `
                         <div class="my-4">
                             <button id="open-cart-btn" class="btn btn-primary btn-lg w-100">

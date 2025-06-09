@@ -2,6 +2,7 @@
 /**
  * @var string $title
  * @var array $currentUser
+ * @var array $orders
  */
 ?>
 
@@ -80,6 +81,27 @@
                     <button type="submit" id="save-profile-btn" class="btn btn-primary btn-lg">Save Changes</button>
                 </div>
             </form>
+        </div>
+        <div class="col-lg-8">
+            <h1 class="mb-4">Orders</h1>
+            <div>
+                <div class="row">
+                    <div class="col-3 text-secondary">Price грн</div>
+                    <div class="col-3 text-secondary">Status</div>
+                    <div class="col-3 text-secondary">PostalIndex</div>
+                    <div class="col-3 text-secondary">Date</div>
+                </div>
+                <?php foreach ($orders as $order): ?>
+                
+                    <div class="row">
+                        <div class="col-3"><?= $order['price'] ?> грн</div>
+                        <div class="col-3"><?= $order['status'] ?></div>
+                        <div class="col-3"><?= $order['postalIndex'] ?></div>
+                        <div class="col-3"><?= $order['date'] ?></div>
+                    </div>
+                
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
 </div>

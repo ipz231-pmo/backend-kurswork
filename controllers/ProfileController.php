@@ -15,10 +15,23 @@ class ProfileController extends Controller
     
     public function actionIndex()
     {
-        if ($this->core->user === null) {
+        $core = $this->core;
+        $user = $core->user;
+        $pdo = $core->DB->getPDO();
+        $tmpl = $this->contentTmpl;
+        
+        if ($user === null) {
             header("Location: /");
             exit();
         }
+        
+        
+        
+        $sql = "SELECT * FROM orders WHERE userId = :userId";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['userId' => $user['id']]);
+        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $tmpl->orders = $orders;
         
         $this->contentTmpl->title = 'My Profile';
         $this->contentTmpl->currentUser = $this->core->user;

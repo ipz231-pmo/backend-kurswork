@@ -13,9 +13,11 @@
  * @var array|null $user
  */
 
-if ($user === null) $this->scripts = array_merge($scripts, ["/js/shop/item/notAuthorized.js"]);
-if ($user !== null && !$cartHasItem) $this->scripts = array_merge($scripts, ["/js/shop/item/cartDoesntHaveItem.js"]);
-if ($user !== null && $cartHasItem) $this->scripts = array_merge($scripts, ["/js/shop/item/cartHasItem.js"]);
+$this->scripts = array_merge($this->scripts, ["/js/shop/item.js"]);
+
+if ($user === null) $this->scripts = array_merge($this->scripts, ["/js/shop/item/notAuthorized.js"]);
+if ($user !== null && !$cartHasItem) $this->scripts = array_merge($this->scripts, ["/js/shop/item/cartDoesntHaveItem.js"]);
+if ($user !== null && $cartHasItem) $this->scripts = array_merge($this->scripts, ["/js/shop/item/cartHasItem.js"]);
 
 ?>
 
@@ -54,33 +56,35 @@ if ($user !== null && $cartHasItem) $this->scripts = array_merge($scripts, ["/js
                 <p class="lead text-muted"><?= nl2br($item['description']) ?></p>
                 <hr>
                 
-                <?php if ($user !== null && !$cartHasItem): ?>
-                        <div class="d-flex align-items-center gap-3 my-4">
-                            <div class="form-group" style="width: 100px;">
-                                <label for="quantity" class="form-label">Quantity:</label>
-                                <input type="number" id="quantity" class="form-control text-center" value="1" min="1">
+                <div id="add-to-cart-layout">
+                    <?php if ($user !== null && !$cartHasItem): ?>
+                            <div class="d-flex align-items-center gap-3 my-4">
+                                <div class="form-group" style="width: 100px;">
+                                    <label for="quantity" class="form-label">Quantity:</label>
+                                    <input type="number" id="quantity" class="form-control text-center" value="1" min="1">
+                                </div>
+                                <div class="form-group flex-grow-1">
+                                    <label class="form-label"> </label>
+                                    <button class="btn btn-primary btn-lg w-100" id="add-to-cart-btn" data-good-id="<?= $item['id'] ?>">
+                                        <i class="bi bi-cart-plus"></i> Add to Cart
+                                    </button>
+                                </div>
                             </div>
-                            <div class="form-group flex-grow-1">
-                                <label class="form-label"> </label>
-                                <button class="btn btn-primary btn-lg w-100" id="add-to-cart-btn" data-good-id="<?= $item['id'] ?>">
-                                    <i class="bi bi-cart-plus"></i> Add to Cart
-                                </button>
-                            </div>
+                    <?php endif; ?>
+                    
+                    <?php if($user !== null && $cartHasItem): ?>
+                        <div class="my-4">
+                            <button id="open-cart-btn" class="btn btn-primary btn-lg w-100">Already in cart</button>
                         </div>
-                <?php endif; ?>
-                
-                <?php if($user !== null && $cartHasItem): ?>
-                    <div class="my-4">
-                        <button id="open-cart-btn" class="btn btn-primary btn-lg w-100">Already in cart</button>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if($user === null): ?>
-                    <div class="alert alert-info my-4">
-                        <div class="h6 mb-3">Please login to add items to your cart.</div>
-                        <button id="show-login-window-btn-from-item" class="btn btn-primary">Login</button>
-                    </div>
-                <?php endif; ?>
+                    <?php endif; ?>
+                    
+                    <?php if($user === null): ?>
+                        <div class="alert alert-info my-4">
+                            <div class="h6 mb-3">Please login to add items to your cart.</div>
+                            <button id="show-login-window-btn-from-item" class="btn btn-primary">Login</button>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>

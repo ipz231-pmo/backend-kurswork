@@ -82,7 +82,7 @@
             </div>
             <div class="d-flex justify-content-end gap-2">
                 <button class="btn btn-secondary" id="close-cart-btn-2">Continue Shopping</button>
-                <button class="btn btn-primary btn-lg">Proceed to Checkout</button>
+                <a href="/shop/placeOrder" class="btn btn-primary btn-lg">Proceed to Checkout</a>
             </div>
         </div>
     <?php endif; ?>

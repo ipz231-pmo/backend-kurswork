@@ -92,7 +92,7 @@ async function handleUpdateQuantity(event) {
     if (isNaN(quantity)) {
         alert('Invalid quantity.');
         input.disabled = false;
-        openCart(); // Revert to original value by refreshing
+        await openCart(); // Revert to original value by refreshing
         return;
     }
 
