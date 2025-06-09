@@ -63,7 +63,6 @@
     <?php endif; ?>
     
     <!-- Logout Window -->
-    
     <?php if ($user !== null): ?>
         <div>
             <div class="container position-relative">
@@ -124,4 +123,16 @@
             </ul>
         </div>
     </div>
+    
+    <!-- Admin Header -->
+    <?php if ($user !== null && $user['role'] == "admin"): ?>
+    <div class="bg-secondary-subtle">
+        <div class="container py-3">
+            <ul class="nav justify-content-center gap-3">
+                <li class="nav-item"><a href="/admin/news" class="nav-link text-primary h6">Update News</a></li>
+                <li class="nav-item"><a href="/admin/goods" class="nav-link text-primary h6">Update Goods</a></li>
+            </ul>
+        </div>
+    </div>
+    <?php endif; ?>
 </header>

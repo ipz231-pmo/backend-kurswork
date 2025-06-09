@@ -5,7 +5,10 @@
         "actions" : [ "login", "logout", "registerAsync", "updateAsync" ]
       },
       "shop" : {
-        "actions" : [ "addToCart", "removeFromCart" ]
+        "actions" : [ "addToCart", "removeFromCart", "placeOrderAsync" ]
+      },
+      "admin" : {
+        "actions" : ["createNewsAsync", "updateNewsAsync", "deleteNewsAsync", "createGoodsAsync", "updateGoodsAsync", "deleteGoodsAsync"]
       }
     }
   }

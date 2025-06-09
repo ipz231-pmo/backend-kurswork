@@ -1,23 +1,23 @@
-
-const createForm = document.getElementById('create-news-form');
+const createForm = document.getElementById('create-goods-form');
 
 createForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    await createNewsItem();
+    await createGoodsItem();
 });
 
-async function createNewsItem(){
+async function createGoodsItem(){
     const btn = createForm.querySelector('button[type="submit"]');
     btn.disabled = true;
 
     const body = {
-        title: document.getElementById('create-title').value,
-        shortText: document.getElementById('create-shortText').value,
-        text: document.getElementById('create-text').value,
+        name: document.getElementById('create-name').value,
+        description: document.getElementById('create-description').value,
+        price: document.getElementById('create-price').value,
+        imageUrl : document.getElementById('create-imageUrl').value,
     };
 
     try {
-        const response = await fetch('/admin/createNewsAsync', {
+        const response = await fetch('/admin/createGoodsAsync', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
@@ -35,11 +35,13 @@ async function createNewsItem(){
     }
 }
 
+
+
 // --- Update and Delete Handling (for each row) ---
-const tableBody = document.getElementById('news-table-body');
+const tableBody = document.getElementById('goods-table-body');
 
 
-tableBody.querySelectorAll('.update-news-form').forEach(form => {
+tableBody.querySelectorAll('.update-goods-form').forEach(form => {
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
         const btn = tableBody.querySelector('button[type="submit"]');
@@ -49,7 +51,7 @@ tableBody.querySelectorAll('.update-news-form').forEach(form => {
         const body = Object.fromEntries(formData.entries());
 
         try {
-            const response = await fetch('/admin/updateNewsAsync', {
+            const response = await fetch('/admin/updateGoodsAsync', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
@@ -78,7 +80,7 @@ tableBody.querySelectorAll('.delete-btn').forEach(button => {
         const id = row.dataset.id;
 
         try {
-            const response = await fetch('/admin/deleteNewsAsync', {
+            const response = await fetch('/admin/deleteGoodsAsync', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: id })

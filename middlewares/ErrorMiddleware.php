@@ -34,8 +34,10 @@ class ErrorMiddleware extends Middleware
             $errorMsg = "Internal server error: {$e->getMessage()}";
         }
         
-        $defaultErrorPage = $this->isShownDefaultClientErrorPage();
-        
+        if (http_response_code() != 404)
+            $defaultErrorPage = $this->isShownDefaultClientErrorPage();
+        else
+            $defaultErrorPage = true;
         
         $code = http_response_code();
         if ($code >= 500 && $code <= 599)
@@ -47,7 +49,7 @@ class ErrorMiddleware extends Middleware
     
     private function handleClientErrors(int $code, bool $defaultErrorPage) : void
     {
-        if (!$defaultErrorPage ||  $code == 404) {
+        if ($defaultErrorPage ||  $code == 404) {
             $this->core->renderErrorPage($code, "Client error");
         }
     }
@@ -62,7 +64,8 @@ class ErrorMiddleware extends Middleware
         if ($controllerRules === null)
             return true;
         
-        if (isset($controllerRules["actions"][$core->actionName]))
+        $actions = $controllerRules["actions"];
+        if (isset($actions) && in_array($core->actionName, $actions))
             return false;
         
         return true;

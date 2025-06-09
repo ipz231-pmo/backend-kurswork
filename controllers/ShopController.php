@@ -346,7 +346,6 @@ class ShopController extends Controller
             echo json_encode(['status' => '500', 'message' => 'Failed to add item to cart.']);
         }
     }
-    
     public function actionRemoveFromCart()
     {
         header('Content-Type: application/json');
